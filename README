@@ -1,0 +1,51 @@
+# sfLuceneable15BehaviorPlugin #
+==============================
+
+The `sfLuceneable15BehaviorPlugin` is a symfony plugin that enabled the model(s) to be searchable. This plugin use sfPropel15Plugin as an ORM.
+
+## Installation ##
+  * Install the plugin
+
+        git clone git://github.com/nibsirahsieu/sfLuceneable15BehaviorPlugin.git
+
+  * Activate the plugin in the `config/ProjectConfiguration.class.php`
+
+        [php]
+        class ProjectConfiguration extends sfProjectConfiguration
+        {
+          public function setup()
+          {
+            ...
+            $this->enablePlugins('sfLuceneable15BehaviorPlugin');
+            ...
+          }
+        }
+
+## How to use ##
+  * Example:
+
+        [xml]
+        <table name="section">
+          <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
+          <column name="title" type="VARCHAR" required="true" primaryString="true" />
+          <column name="content" type="LONGVARCHAR" required="true" />
+          <behavior name="luceneable" />
+        </table>
+
+     if you don't supply the parameter values, the behavior will index all columns using `UnStored` method except the primary key (primary key will be indexed Using `Keyword` method).
+
+  * Customizing behavior (Note: the parameter for primary key will be ignored, and its will indexed using `Keyword` method)
+
+        [xml]
+        <table name="section">
+          <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
+          <column name="title" type="VARCHAR" required="true" primaryString="true" />
+          <column name="content" type="LONGVARCHAR" required="true" />
+          <behavior name="luceneable" >
+            <parameter name='title' value='text' />
+            <parameter name='content' value='unstored' />
+          </behavior>
+        </table>
+
+## How to Search ##
+  * $activeRecords = sfPropelLuceneSearch::create($query)->in($model)->find();  
