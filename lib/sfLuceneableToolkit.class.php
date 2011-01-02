@@ -6,18 +6,18 @@ class sfLuceneableToolkit
 
   private static function prepareZendSearchLucene()
   {
-		Zend_Search_Lucene_Analysis_Analyzer::setDefault(new Zend_Search_Lucene_Analysis_Analyzer_Common_Utf8Num_CaseInsensitive());
+    Zend_Search_Lucene_Analysis_Analyzer::setDefault(new Zend_Search_Lucene_Analysis_Analyzer_Common_Utf8Num_CaseInsensitive());
 
     $stopWords = sfConfig::get('app_sf_luceneable15_behavior_stopWords', false);
     $stopWordsFilter = new Zend_Search_Lucene_Analysis_TokenFilter_StopWords(false === $stopWords ? array() : explode(',', $stopWords));
-		Zend_Search_Lucene_Analysis_Analyzer::getDefault()->addFilter($stopWordsFilter);
-    
+    Zend_Search_Lucene_Analysis_Analyzer::getDefault()->addFilter($stopWordsFilter);
+
     $shortWords = sfConfig::get('app_sf_luceneable15_behavior_shortWords', 3);
-		$shortWordsFilter = new Zend_Search_Lucene_Analysis_TokenFilter_ShortWords($shortWords);
-		Zend_Search_Lucene_Analysis_Analyzer::getDefault()->addFilter($shortWordsFilter);
+    $shortWordsFilter = new Zend_Search_Lucene_Analysis_TokenFilter_ShortWords($shortWords);
+    Zend_Search_Lucene_Analysis_Analyzer::getDefault()->addFilter($shortWordsFilter);
 
     Zend_Search_Lucene_Storage_Directory_Filesystem::setDefaultFilePermissions(0777);
-	}
+  }
   
   static public function registerZend()
   {
@@ -61,19 +61,19 @@ class sfLuceneableToolkit
 
   public static function optimizeIndex($class, $index = null)
   {
-		if (null === $index) $index = self::getLuceneIndex($class);
-		$index->optimize();
-	}
+    if (null === $index) $index = self::getLuceneIndex($class);
+    $index->optimize();
+  }
 
   public static function removeIndex($class, $index = null)
   {
     if (null === $index) $index = self::getLuceneIndex($class);
-		if (file_exists($index))
+    if (file_exists($index))
     {
-			sfToolkit::clearDirectory($index);
-			rmdir($index);
-		}
-	}
+      sfToolkit::clearDirectory($index);
+      rmdir($index);
+    }
+  }
 
   public static function createIndex($class, $index = null)
   {

@@ -10,33 +10,33 @@ class LuceneableBehavior extends Behavior
   }
 
   /**
-	 * Get the getter of the column of the behavior
-	 * @param string $col the column name
-	 * @return string The related getter, e.g. 'getSlug'
-	 */
-	protected function getColumnGetter($col)
-	{
-		return 'get' . $this->getTable()->getColumn($col)->getPhpName();
-	}
+  * Get the getter of the column of the behavior
+  * @param string $col the column name
+  * @return string The related getter, e.g. 'getSlug'
+  */
+  protected function getColumnGetter($col)
+  {
+    return 'get' . $this->getTable()->getColumn($col)->getPhpName();
+  }
 
-	public function postSave($builder)
-	{
+  public function postSave($builder)
+  {
     return "if (\$affectedRows > 0) \$this->updateLuceneIndex();";
-	}
+  }
 
   public function postDelete($builder)
-	{
+  {
     return "\$this->deleteLuceneIndex();";
-	}
+  }
 
   public function objectMethods($builder)
-	{
+  {
     $script = '';
-		$script .= $this->addUpdateLuceneIndex();
-		$script .= $this->addDeleteLuceneIndex();
+    $script .= $this->addUpdateLuceneIndex();
+    $script .= $this->addDeleteLuceneIndex();
 
-		return $script;
-	}
+    return $script;
+  }
 
   public function addUpdateLuceneIndex()
   {
