@@ -1,7 +1,6 @@
 <?php
 class sfLuceneableToolkit
 {
-  public static $_index = array();
   static protected $zendLoaded = false;
 
   private static function prepareZendSearchLucene()
@@ -33,11 +32,6 @@ class sfLuceneableToolkit
 
   static public function getLuceneIndex($class)
   {
-    if (isset(self::$_index[$class]))
-    {
-      return self::$_index[$class];
-    }
-
     self::registerZend();
     
     if (file_exists($index = self::getLuceneIndexFile($class)))
@@ -49,7 +43,6 @@ class sfLuceneableToolkit
       $luceneIndex = Zend_Search_Lucene::create($index);
       chmod($index, 0777);
     }
-    self::$_index[$class] = $luceneIndex;
     return $luceneIndex;
   }
 
@@ -59,25 +52,25 @@ class sfLuceneableToolkit
     return $data_dir.DIRECTORY_SEPARATOR.$class.'.index';
   }
 
-  public static function optimizeIndex($class, $index = null)
+  public static function optimizeIndex($class)
   {
-    if (null === $index) $index = self::getLuceneIndex($class);
+    $index = self::getLuceneIndex($class);
     $index->optimize();
   }
 
-  public static function removeIndex($class, $index = null)
+  public static function removeIndex($class)
   {
-    if (null === $index) $index = self::getLuceneIndex($class);
-    if (file_exists($index))
+    $index = self::getLuceneIndexFile($class);
+    if ($index && file_exists($index))
     {
       sfToolkit::clearDirectory($index);
       rmdir($index);
     }
   }
 
-  public static function createIndex($class, $index = null)
+  public static function createIndex($class)
   {
-    if (null === $index) $index = self::getLuceneIndex($class);
+    $index = self::getLuceneIndex($class);
     $objects = PropelQuery::from($class)->find();
     foreach ($objects as $object)
     {

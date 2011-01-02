@@ -54,7 +54,6 @@ EOF;
     foreach ($luceneableModels as $luceneableModel)
     {
       $this->logSection('propel', sprintf('Recreating lucene index for %s model', $luceneableModel));
-      $index = sfLuceneableToolkit::getLuceneIndex($luceneableModel);
       sfLuceneableToolkit::removeIndex($luceneableModel);
       sfLuceneableToolkit::createIndex($luceneableModel);
       $this->logSection('propel', sprintf('Optimizing lucene index for %s model', $luceneableModel));

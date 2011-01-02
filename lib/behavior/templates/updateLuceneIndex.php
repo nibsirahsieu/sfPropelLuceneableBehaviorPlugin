@@ -4,9 +4,9 @@
  * @param zend lucene index $index
  * @return boolean
  */
-public function updateLuceneIndex($index = null)
+public function updateLuceneIndex()
 {
-  if (null === $index) $index = sfLuceneableToolkit::getLuceneIndex(get_class($this));
+  $index = sfLuceneableToolkit::getLuceneIndex(get_class($this));
 
   // remove existing entries
   $this->deleteLuceneIndex($index);

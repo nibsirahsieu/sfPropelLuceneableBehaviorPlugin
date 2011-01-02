@@ -18,7 +18,7 @@ class sfPropelLuceneSearch
   {
     if (is_array($models))
     {
-      $this->models = $models;
+      $this->_models = $models;
     }
     else
     {
@@ -29,7 +29,7 @@ class sfPropelLuceneSearch
 
   public function find($limit = 10)
   {
-    foreach ($this->models as $model)
+    foreach ($this->_models as $model)
     {
       $hits = sfLuceneableToolkit::getLuceneIndex($model)->find($this->_queryString);
       $pks = array();

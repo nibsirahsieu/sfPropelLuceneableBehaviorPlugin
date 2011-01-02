@@ -4,9 +4,9 @@
  * @param zend lucene index $index
  * @return boolean
  */
-public function deleteLuceneIndex($index = null)
+public function deleteLuceneIndex()
 {
-  if (null === $index) $index = sfLuceneableToolkit::getLuceneIndex(get_class($this));
+  $index = sfLuceneableToolkit::getLuceneIndex(get_class($this));
   foreach ($index->find('pk:'.$this->getPrimaryKey()) as $hit)
   {
     $index->delete($hit->id);
