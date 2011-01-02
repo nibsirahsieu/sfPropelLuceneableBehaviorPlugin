@@ -40,4 +40,18 @@ class sfPropelLuceneSearch
       return PropelQuery::from($model)->limit($limit)->findPks($pks);
     }
   }
+  
+  public function paginate($page, $limit = 10)
+  {
+    foreach ($this->_models as $model)
+    {
+      $hits = sfLuceneableToolkit::getLuceneIndex($model)->find($this->_queryString);
+      $pks = array();
+      foreach ($hits as $hit)
+      {
+        $pks[] = $hit->pk;
+      }
+      return PropelQuery::from($model)->filterByPrimaryKeys($pks)->paginate($page, $limit);
+    }
+  }
 }
