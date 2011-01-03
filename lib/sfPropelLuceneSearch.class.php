@@ -2,56 +2,34 @@
 class sfPropelLuceneSearch
 {
   protected $_queryString = "";
-  protected $_models = array();
+  protected $_model = '';
   
-  public function __construct($sSearch = null)
+  public function __construct($model, $sSearch = null)
   {
+    if (!($sSearch instanceof Zend_Search_Lucene_Search_Query))
+    {
+      $sSearch = Zend_Search_Lucene_Search_QueryParser::parse($sSearch);
+    }
     $this->_queryString = $sSearch;
+    $this->_model = $model;
   }
 
-  public static function create($sSearch = null)
+  public static function create($model, $sSearch = null)
   {
-    return new self($sSearch);
+    return new self($model, $sSearch);
   }
   
-  public function in($models)
-  {
-    if (is_array($models))
-    {
-      $this->_models = $models;
-    }
-    else
-    {
-      $this->_models = func_get_args();
-    }
-    return $this;
-  }
-
   public function find($limit = 10)
   {
-    foreach ($this->_models as $model)
-    {
-      $hits = sfLuceneableToolkit::getLuceneIndex($model)->find($this->_queryString);
-      $pks = array();
-      foreach ($hits as $hit)
-      {
-        $pks[] = $hit->pk;
-      }
-      return PropelQuery::from($model)->limit($limit)->findPks($pks);
-    }
+    $hits = sfLuceneableToolkit::getHits($this->_model, $this->_queryString);
+    return new sfLuceneModelResults($model, $hits, $this->_queryString);
   }
-  
+
   public function paginate($page, $limit = 10)
   {
-    foreach ($this->_models as $model)
-    {
-      $hits = sfLuceneableToolkit::getLuceneIndex($model)->find($this->_queryString);
-      $pks = array();
-      foreach ($hits as $hit)
-      {
-        $pks[] = $hit->pk;
-      }
-      return PropelQuery::from($model)->filterByPrimaryKeys($pks)->paginate($page, $limit);
-    }
+    $pager = new sfLucenePager($this->_model, $this->_queryString, $limit);
+		$pager->setPage($page);
+		$pager->init();
+    return $pager;
   }
 }

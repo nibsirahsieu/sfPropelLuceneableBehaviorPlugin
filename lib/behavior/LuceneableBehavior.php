@@ -3,7 +3,7 @@ class LuceneableBehavior extends Behavior
 {
   protected  function getLuceneFieldMethod($method)
   {
-    $availableMethods = array('keyword' => 'Keyword', 'unidexed' => 'UnIndexed', 'binary' => 'Binary', 'text' => 'Text', 'unstored' => 'UnStored');
+    $availableMethods = array('keyword' => 'Keyword', 'unindexed' => 'UnIndexed', 'binary' => 'Binary', 'text' => 'Text', 'unstored' => 'UnStored');
     $method = strtolower($method);
     if (isset($availableMethods[$method])) return $availableMethods[$method];
     throw new Exception(sprintf('Unknown Lucene Field method %s', $method));
@@ -27,6 +27,46 @@ class LuceneableBehavior extends Behavior
   public function postDelete($builder)
   {
     return "\$this->deleteLuceneIndex();";
+  }
+
+  public function addStaticStoredIndex()
+  {
+    $data = array();
+    $columns = $this->getParameters();
+    if (empty($columns))
+    {
+      $table = $this->getTable();
+      foreach ($table->getColumns() as $col) {
+        $clo = strtolower($col->getName());
+        $data[$clo] = $col->isPrimaryKey() ? 'Keyword' : 'Unstored';
+      }
+    }
+    else
+    {
+      foreach ($columns as $col => $type)
+      {
+        $clo = strtolower($col);
+        $data[$clo] = $this->getLuceneFieldMethod($type);
+      }
+    }
+    return $this->renderTemplate('staticStoredIndex', array(
+			'data'   => $data,
+    ));
+  }
+
+  public function addGetIndexedColumns()
+  {
+    return $this->renderTemplate('getIndexedColumns');
+  }
+  
+  public function staticAttributes($builder)
+  {
+    return $this->addStaticStoredIndex();
+  }
+
+  public function staticMethods($builder)
+  {
+    return $this->addGetIndexedColumns();
   }
 
   public function objectMethods($builder)

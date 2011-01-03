@@ -77,4 +77,23 @@ class sfLuceneableToolkit
       $object->updateLuceneIndex($index);
     }
   }
+
+  static public function getHits($model, $query)
+  {
+    $results = array();
+    $index = self::getLuceneIndex($model);
+    try
+    {
+      $hits = $index->find($query);
+      foreach ($hits as $hit)
+      {
+        $results[] = $hit;
+      }
+    }
+    catch (Exception $e)
+    {
+      $results = array();
+    }
+    return $results;
+  }
 }
