@@ -44,9 +44,29 @@ The `sfLuceneable15BehaviorPlugin` is a symfony plugin that enabled the model(s)
           <behavior name="luceneable" >
             <parameter name='id' value='keyword' />
             <parameter name='title' value='text' />
-            <parameter name='content' value='unstored' />
+            <parameter name='content' value='text' />
           </behavior>
         </table>
 
 ## How to Search ##
-  * $activeRecords = sfPropelLuceneSearch::create($query)->in($model)->find();  
+
+  * pagination
+
+    $pager = sfPropelLuceneSearch::create($model, $query)->paginate($page=1, $limit = 10);
+
+    [php]
+    foreach ($pager->getResults() as $value)
+    {
+      echo $value->getTitle() . ',' . $value->getContent();
+    }
+
+  * non pagination
+    $values = sfPropelLuceneSearch::create($model, $query)->find($limit = 10);
+
+    [php]
+    foreach ($values as $value)
+    {
+    	echo $value->getTitle() . ',' . $value->getContent();
+    }
+
+
