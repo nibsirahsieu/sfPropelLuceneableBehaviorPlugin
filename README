@@ -69,4 +69,7 @@ The `sfLuceneable15BehaviorPlugin` is a symfony plugin that enabled the model(s)
     	echo $value->getTitle() . ',' . $value->getContent();
     }
 
+## Available tasks
 
+  * ./symfony propel:generate-lucene-index
+  * ./symfony propel:optimize-lucene-index
