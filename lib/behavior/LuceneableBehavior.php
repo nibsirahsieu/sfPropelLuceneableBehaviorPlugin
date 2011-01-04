@@ -38,15 +38,36 @@ class LuceneableBehavior extends Behavior
       $table = $this->getTable();
       foreach ($table->getColumns() as $col) {
         $clo = strtolower($col->getName());
-        $data[$clo] = $col->isPrimaryKey() ? 'Keyword' : 'Unstored';
+        if ($col->isPrimaryKey())
+        {
+          $clo = 'pk';
+          $data[$clo] = 'Keyword';
+        }
+        else 
+        {
+          $data[$clo] = 'Unstored';
+        }
       }
     }
     else
     {
-      foreach ($columns as $col => $type)
+      $keywordFound = false;
+      foreach ($columns as $c => $type)
       {
-        $clo = strtolower($col);
+        $col = $this->getTable()->getColumn($c);
+        $clo = strtolower($col->getName());
+        $fieldMethod = $this->getLuceneFieldMethod($type);
+        if (strtolower($type) == 'keyword')
+        {
+          $keywordFound = true;
+        }
         $data[$clo] = $this->getLuceneFieldMethod($type);
+      }
+      if (!$keywordFound)
+      {
+        $pks = $this->getTable()->getPrimaryKey();
+        if (count($pks) > 0) $pks = $pks[0];
+        $data[strtolower($pks->getName())] = $this->getLuceneFieldMethod($type);
       }
     }
     return $this->renderTemplate('staticStoredIndex', array(
@@ -94,9 +115,9 @@ class LuceneableBehavior extends Behavior
         }
         else
         {
-          $fieldMethod = 'Keyword';
+          $clo = 'pk';
         }
-        $data[] = array('Keyword', $clo, $method);
+        $data[] = array($fieldMethod, $clo, $method);
       }
     }
     else
@@ -110,6 +131,7 @@ class LuceneableBehavior extends Behavior
         $fieldMethod = $this->getLuceneFieldMethod($type);
         if (strtolower($type) == 'keyword')
         {
+          $clo = 'pk';
           $keywordFound = true;
         }
         $data[] = array($fieldMethod, $clo, $method);
@@ -118,7 +140,7 @@ class LuceneableBehavior extends Behavior
       {
         $pks = $this->getTable()->getPrimaryKey();
         if (count($pks) > 0) $pks = $pks[0];
-        $data[] = array('keyword', strtolower($pks->getName()), 'get'.$pks->getPhpName().'()');
+        $data[] = array('keyword', 'pk', 'get'.$pks->getPhpName().'()');
       }
     }
     return $this->renderTemplate('updateLuceneIndex', array(
@@ -128,7 +150,7 @@ class LuceneableBehavior extends Behavior
 
   public function addDeleteLuceneIndex()
   {
-    $data = array();
+    $method = null;
     $columns = $this->getParameters();
     if (empty($columns))
     {
@@ -137,7 +159,7 @@ class LuceneableBehavior extends Behavior
       {
         if ($col->isPrimaryKey())
         {
-          $data = array(strtolower($col->getName()), 'get'.$col->getPhpName().'()');
+          $method =  'get'.$col->getPhpName().'()';
           break;
         }
       }
@@ -149,17 +171,17 @@ class LuceneableBehavior extends Behavior
         $col = $this->getTable()->getColumn($c);
         if (strtolower($type) == 'keyword')
         {
-          $data = array(strtolower($col->getName()), 'get'.$col->getPhpName().'()');
+          $method = 'get'.$col->getPhpName().'()';
           break;
         }
       }
-      if (empty ($data))
+      if ($method == null)
       {
         $pks = $this->getTable()->getPrimaryKey();
         if (count($pks) > 0) $pks = $pks[0];
-        $data = array(strtolower($pks->getName()), 'get'.$pks->getPhpName().'()');
+        $method = 'get'.$pks->getPhpName().'()';
       }
     }
-    return $this->renderTemplate('deleteLuceneIndex', array('data'=>$data));
+    return $this->renderTemplate('deleteLuceneIndex', array('method' => $method));
   }
 }

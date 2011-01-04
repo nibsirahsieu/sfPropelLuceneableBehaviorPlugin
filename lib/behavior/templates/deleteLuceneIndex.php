@@ -7,11 +7,10 @@
 public function deleteLuceneIndex()
 {
   $index = sfLuceneableToolkit::getLuceneIndex(get_class($this));
-  foreach ($index->find('<?php echo $data[0] ?>:'.$this-><?php echo $data[1] ?>) as $hit)
+  foreach ($index->find('pk:'.$this-><?php echo $method ?>) as $hit)
   {
     $index->delete($hit->id);
   }
 
   return true;
 }
-

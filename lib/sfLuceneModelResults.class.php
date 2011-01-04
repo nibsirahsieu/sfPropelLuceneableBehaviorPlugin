@@ -74,6 +74,10 @@ class sfLuceneModelResults implements Iterator, Countable, ArrayAccess
       {
         $tmp[$col] = $this->query->htmlFragmentHighlightMatches($result->$col);
       }
+      elseif (strtolower($type) == 'keyword')
+      {
+        $tmp[$col] = $result->pk;
+      }
       else
       {
         $tmp[$col] = $result->$col;
@@ -84,5 +88,16 @@ class sfLuceneModelResults implements Iterator, Countable, ArrayAccess
     $object->setNew(false);
     $object->resetModified();
     return $object;
+  }
+
+  public function toArray()
+  {
+    $retvals = array();
+    foreach ($this->results as $result)
+    {
+      $object = $this->hydrate($result);
+      $retvals[] = $object;
+    }
+    return $retvals;
   }
 }
