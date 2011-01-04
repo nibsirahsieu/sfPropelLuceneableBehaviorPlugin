@@ -52,7 +52,7 @@ The `sfLuceneable15BehaviorPlugin` is a symfony plugin that enabled the model(s)
 
   * pagination
 
-    $pager = sfPropelLuceneSearch::create($model, $query)->paginate($page=1, $limit = 10);
+    $pager = sfLuceneModelSearch::create($model, $query)->paginate($page=1, $limit = 10);
 
     [php]
     foreach ($pager->getResults() as $value)
@@ -61,7 +61,7 @@ The `sfLuceneable15BehaviorPlugin` is a symfony plugin that enabled the model(s)
     }
 
   * non pagination
-    $values = sfPropelLuceneSearch::create($model, $query)->find($limit = 10);
+    $values = sfLuceneModelSearch::create($model, $query)->find($limit = 10);
 
     [php]
     foreach ($values as $value)

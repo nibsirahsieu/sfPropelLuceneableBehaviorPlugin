@@ -1,5 +1,5 @@
 <?php
-class sfPropelLuceneSearch
+class sfLuceneModelSearch
 {
   protected $_queryString = "";
   protected $_model = '';
