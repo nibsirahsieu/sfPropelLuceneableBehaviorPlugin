@@ -70,8 +70,7 @@ class sfLuceneModelResults implements Iterator, Countable, ArrayAccess
     $tmp = array();
     foreach ($this->indexedColumns as $col => $type)
     {
-      if ($col == 'id') $tmp[$col] = $result->pk;
-      elseif (strtolower($type) == 'text')
+      if (strtolower($type) == 'text')
       {
         $tmp[$col] = $this->query->htmlFragmentHighlightMatches($result->$col);
       }

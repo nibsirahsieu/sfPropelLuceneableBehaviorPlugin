@@ -86,11 +86,10 @@ class LuceneableBehavior extends Behavior
     {
       $table = $this->getTable();
       foreach ($table->getColumns() as $col) {
-        $clo = 'pk';
+        $clo = strtolower($col->getName());
         $method = 'get'.$col->getPhpName().'()';
         if (!$col->isPrimaryKey())
         {
-          $clo = strtolower($col->getName());
           $fieldMethod = 'Unstored';
         }
         else
@@ -106,16 +105,12 @@ class LuceneableBehavior extends Behavior
       foreach ($columns as $c => $type)
       {
         $col = $this->getTable()->getColumn($c);
+        $clo = strtolower($col->getName());
         $method = 'get'.$col->getPhpName().'()';
         $fieldMethod = $this->getLuceneFieldMethod($type);
         if (strtolower($type) == 'keyword')
         {
-          $clo = 'pk';
           $keywordFound = true;
-        }
-        else
-        {
-          $clo = strtolower($col->getName());
         }
         $data[] = array($fieldMethod, $clo, $method);
       }
@@ -123,7 +118,7 @@ class LuceneableBehavior extends Behavior
       {
         $pks = $this->getTable()->getPrimaryKey();
         if (count($pks) > 0) $pks = $pks[0];
-        $data[] = array('keyword', 'pk', 'get'.$pks->getPhpName().'()');
+        $data[] = array('keyword', strtolower($pks->getName()), 'get'.$pks->getPhpName().'()');
       }
     }
     return $this->renderTemplate('updateLuceneIndex', array(
@@ -133,6 +128,38 @@ class LuceneableBehavior extends Behavior
 
   public function addDeleteLuceneIndex()
   {
-    return $this->renderTemplate('deleteLuceneIndex');
+    $data = array();
+    $columns = $this->getParameters();
+    if (empty($columns))
+    {
+      $table = $this->getTable();
+      foreach ($table->getColumns() as $col)
+      {
+        if ($col->isPrimaryKey())
+        {
+          $data = array(strtolower($col->getName()), 'get'.$col->getPhpName().'()');
+          break;
+        }
+      }
+    }
+    else
+    {
+      foreach ($columns as $c => $type)
+      {
+        $col = $this->getTable()->getColumn($c);
+        if (strtolower($type) == 'keyword')
+        {
+          $data = array(strtolower($col->getName()), 'get'.$col->getPhpName().'()');
+          break;
+        }
+      }
+      if (empty ($data))
+      {
+        $pks = $this->getTable()->getPrimaryKey();
+        if (count($pks) > 0) $pks = $pks[0];
+        $data = array(strtolower($pks->getName()), 'get'.$pks->getPhpName().'()');
+      }
+    }
+    return $this->renderTemplate('deleteLuceneIndex', array('data'=>$data));
   }
 }
