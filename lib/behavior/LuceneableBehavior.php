@@ -86,23 +86,44 @@ class LuceneableBehavior extends Behavior
     {
       $table = $this->getTable();
       foreach ($table->getColumns() as $col) {
-        //skip primary key
+        $clo = 'pk';
+        $method = 'get'.$col->getPhpName().'()';
         if (!$col->isPrimaryKey())
         {
-          $method = 'get'.$col->getPhpName().'()';
           $clo = strtolower($col->getName());
-          $data[] = array('UnStored', $clo, $method);
+          $fieldMethod = 'Unstored';
         }
+        else
+        {
+          $fieldMethod = 'Keyword';
+        }
+        $data[] = array('Keyword', $clo, $method);
       }
     }
     else
     {
-      foreach ($columns as $col => $type)
+      $keywordFound = false;
+      foreach ($columns as $c => $type)
       {
-        $method = $this->getColumnGetter($col).'()';
-        $clo = strtolower($col);
+        $col = $this->getTable()->getColumn($c);
+        $method = 'get'.$col->getPhpName().'()';
         $fieldMethod = $this->getLuceneFieldMethod($type);
+        if (strtolower($type) == 'keyword')
+        {
+          $clo = 'pk';
+          $keywordFound = true;
+        }
+        else
+        {
+          $clo = strtolower($col->getName());
+        }
         $data[] = array($fieldMethod, $clo, $method);
+      }
+      if (!$keywordFound)
+      {
+        $pks = $this->getTable()->getPrimaryKey();
+        if (count($pks) > 0) $pks = $pks[0];
+        $data[] = array('keyword', 'pk', 'get'.$pks->getPhpName().'()');
       }
     }
     return $this->renderTemplate('updateLuceneIndex', array(
