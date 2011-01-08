@@ -7,11 +7,11 @@ class sfLuceneableToolkit
   {
     Zend_Search_Lucene_Analysis_Analyzer::setDefault(new Zend_Search_Lucene_Analysis_Analyzer_Common_Utf8Num_CaseInsensitive());
 
-    $stopWords = sfConfig::get('app_sf_luceneable15_behavior_stopWords', false);
+    $stopWords = sfConfig::get('app_sf_propel_luceneable_behavior_stopWords', false);
     $stopWordsFilter = new Zend_Search_Lucene_Analysis_TokenFilter_StopWords(false === $stopWords ? array() : explode(',', $stopWords));
     Zend_Search_Lucene_Analysis_Analyzer::getDefault()->addFilter($stopWordsFilter);
 
-    $shortWords = sfConfig::get('app_sf_luceneable15_behavior_shortWords', 3);
+    $shortWords = sfConfig::get('app_sf_propel_luceneable_behavior_shortWords', 3);
     $shortWordsFilter = new Zend_Search_Lucene_Analysis_TokenFilter_ShortWords($shortWords);
     Zend_Search_Lucene_Analysis_Analyzer::getDefault()->addFilter($shortWordsFilter);
 
@@ -48,7 +48,7 @@ class sfLuceneableToolkit
 
   static public function getLuceneIndexFile($class)
   {
-    $data_dir = sfConfig::get('app_sf_luceneable15_behavior_data_dir', sfConfig::get('sf_data_dir').DIRECTORY_SEPARATOR.'lucene');
+    $data_dir = sfConfig::get('app_sf_propel_luceneable_behavior_data_dir', sfConfig::get('sf_data_dir').DIRECTORY_SEPARATOR.'lucene');
     return $data_dir.DIRECTORY_SEPARATOR.$class.'.index';
   }
 

@@ -1,5 +1,5 @@
 <?php
-class sfLuceneable15BehaviorPluginConfiguration extends sfPluginConfiguration
+class sfPropelLuceneableBehaviorPluginConfiguration extends sfPluginConfiguration
 {
   public function initialize()
   {

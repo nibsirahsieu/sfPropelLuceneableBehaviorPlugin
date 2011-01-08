@@ -1,12 +1,12 @@
-# sfLuceneable15BehaviorPlugin #
-==============================
+# sfPropelLuceneableBehaviorPlugin #
+==================================
 
-The `sfLuceneable15BehaviorPlugin` is a symfony plugin that enabled the model(s) to be searchable. This plugin use sfPropel15Plugin as an ORM.
+The `sfPropelLuceneableBehaviorPlugin` is a symfony plugin that enabled the model(s) to be searchable. This plugin use sfPropel15Plugin as an ORM.
 
 ## Installation ##
   * Install the plugin
 
-        git clone git://github.com/nibsirahsieu/sfLuceneable15BehaviorPlugin.git
+        git clone git://github.com/nibsirahsieu/sfPropelLuceneableBehaviorPlugin.git
 
   * Activate the plugin in the `config/ProjectConfiguration.class.php`
 
@@ -16,7 +16,7 @@ The `sfLuceneable15BehaviorPlugin` is a symfony plugin that enabled the model(s)
           public function setup()
           {
             ...
-            $this->enablePlugins('sfLuceneable15BehaviorPlugin');
+            $this->enablePlugins('sfPropelLuceneableBehaviorPlugin');
             ...
           }
         }
