@@ -34,7 +34,7 @@ The `sfPropelLuceneableBehaviorPlugin` is a symfony plugin that enabled the mode
 
      if you don't supply the parameter values, the behavior will index all columns using `UnStored` method except the primary key (primary key will be indexed Using `Keyword` method).
 
-  * Customizing behavior
+  * Customizing behavior (format parameter value => fieldMethod:boost, ex: text:1.8)
 
         [xml]
         <table name="section">
@@ -43,8 +43,9 @@ The `sfPropelLuceneableBehaviorPlugin` is a symfony plugin that enabled the mode
           <column name="content" type="LONGVARCHAR" required="true" />
           <behavior name="luceneable" >
             <parameter name='id' value='keyword' />
-            <parameter name='title' value='text' />
-            <parameter name='content' value='text' />
+            <parameter name='title' value='text:1.5' />
+            <parameter name='content' value='unstored:1.5' />
+            <parameter name='published_at' value='unindexed' />
           </behavior>
         </table>
 
