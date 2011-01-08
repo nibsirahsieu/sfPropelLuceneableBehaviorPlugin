@@ -18,7 +18,7 @@ class sfLuceneModelSearch
   public function find($limit = 10)
   {
     $hits = sfLuceneableToolkit::getHits($this->_model, $this->_queryString);
-    return new sfLuceneModelResults($model, $hits);
+    return PropelQuery::from($this->model)->findPks($hits);
   }
 
   public function paginate($page, $limit = 10)

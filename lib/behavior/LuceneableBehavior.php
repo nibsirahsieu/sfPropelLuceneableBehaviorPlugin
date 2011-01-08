@@ -29,67 +29,6 @@ class LuceneableBehavior extends Behavior
     return "\$this->deleteLuceneIndex();";
   }
 
-  public function addStaticStoredIndex()
-  {
-    $data = array();
-    $columns = $this->getParameters();
-    if (empty($columns))
-    {
-      $table = $this->getTable();
-      foreach ($table->getColumns() as $col) {
-        $clo = $col->getPhpName();
-        if ($col->isPrimaryKey())
-        {
-          $clo = 'pk';
-          $data[$clo] = 'Keyword';
-        }
-        else 
-        {
-          $data[$clo] = 'Unstored';
-        }
-      }
-    }
-    else
-    {
-      $keywordFound = false;
-      foreach ($columns as $c => $type)
-      {
-        $col = $this->getTable()->getColumn($c);
-        $clo = $col->getPhpName();
-        $fieldMethod = $this->getLuceneFieldMethod($type);
-        if (strtolower($type) == 'keyword')
-        {
-          $keywordFound = true;
-        }
-        $data[$clo] = $this->getLuceneFieldMethod($type);
-      }
-      if (!$keywordFound)
-      {
-        $pks = $this->getTable()->getPrimaryKey();
-        if (count($pks) > 0) $pks = $pks[0];
-        $data[$pks->getPhpName()] = $this->getLuceneFieldMethod($type);
-      }
-    }
-    return $this->renderTemplate('staticStoredIndex', array(
-			'data'   => $data,
-    ));
-  }
-
-  public function addGetIndexedColumns()
-  {
-    return $this->renderTemplate('getIndexedColumns');
-  }
-  
-  public function staticAttributes($builder)
-  {
-    return $this->addStaticStoredIndex();
-  }
-
-  public function staticMethods($builder)
-  {
-    return $this->addGetIndexedColumns();
-  }
-
   public function objectMethods($builder)
   {
     $script = '';
@@ -107,40 +46,44 @@ class LuceneableBehavior extends Behavior
     {
       $table = $this->getTable();
       foreach ($table->getColumns() as $col) {
-        $clo = strtolower($col->getName());
-        $method = 'get'.$col->getPhpName().'()';
+        $fieldMethods = array();
+        $clo = $col->getPhpName();
         if (!$col->isPrimaryKey())
         {
-          $fieldMethod = 'Unstored';
+          $fieldMethods[] = 'Unstored';
         }
         else
         {
+          $fieldMethods[] = 'Keyword';
           $clo = 'pk';
         }
-        $data[] = array($fieldMethod, $clo, $method);
+        $data[] = array($fieldMethods, $clo, 'get'.$col->getPhpName().'()');
       }
     }
     else
     {
       $keywordFound = false;
-      foreach ($columns as $c => $type)
+      foreach ($columns as $c => $type_boost)
       {
+        $fieldMethods = array();
         $col = $this->getTable()->getColumn($c);
-        $clo = strtolower($col->getName());
-        $method = 'get'.$col->getPhpName().'()';
-        $fieldMethod = $this->getLuceneFieldMethod($type);
-        if (strtolower($type) == 'keyword')
+        $clo = $col->getPhpName();
+        $type = explode(':', $type_boost);
+        $fieldMethods[] = $this->getLuceneFieldMethod($type[0]);
+        if (isset($type[1])) $fieldMethods[] = $type[1];
+        if (strtolower($type[0]) == 'keyword')
         {
           $clo = 'pk';
           $keywordFound = true;
         }
-        $data[] = array($fieldMethod, $clo, $method);
+        $data[] = array($fieldMethods, $clo, 'get'.$col->getPhpName().'()');
       }
       if (!$keywordFound)
       {
         $pks = $this->getTable()->getPrimaryKey();
         if (count($pks) > 0) $pks = $pks[0];
-        $data[] = array('keyword', 'pk', 'get'.$pks->getPhpName().'()');
+        $fieldMethods[] = 'Keyword';
+        $data[] = array($fieldMethods, 'pk', 'get'.$pks->getPhpName().'()');
       }
     }
     return $this->renderTemplate('updateLuceneIndex', array(

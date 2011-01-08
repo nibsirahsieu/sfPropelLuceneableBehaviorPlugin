@@ -102,7 +102,7 @@ class sfLucenePager
       $results = $this->results;
     }
     $results = array_slice($this->results, $offset, $limit);
-    return new sfLuceneModelResults($this->model, $results);
+    return PropelQuery::from($this->model)->findPks($results);
   }
 
   public function getFirstPage()

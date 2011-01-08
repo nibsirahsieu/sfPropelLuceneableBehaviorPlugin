@@ -13,7 +13,11 @@ public function updateLuceneIndex()
 
   $doc = new Zend_Search_Lucene_Document();
 <?php foreach ($data as $v): ?>
-  $doc->addField(Zend_Search_Lucene_Field::<?php echo $v[0] ?>('<?php echo $v[1] ?>', $this-><?php echo $v[2] ?>, 'utf-8'));
+  $field = Zend_Search_Lucene_Field::<?php echo $v[0][0] ?>('<?php echo $v[1] ?>', $this-><?php echo $v[2] ?>, 'utf-8');
+  <?php if (isset($v[0][1]) && null !== $boost = $v[0][1]): ?>
+$field->boost = <?php echo $boost ?>;
+  <?php endif; ?>
+$doc->addField($field);
 <?php endforeach; ?>
 
   $index->addDocument($doc);
