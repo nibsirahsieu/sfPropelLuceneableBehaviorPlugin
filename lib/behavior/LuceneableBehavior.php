@@ -37,7 +37,7 @@ class LuceneableBehavior extends Behavior
     {
       $table = $this->getTable();
       foreach ($table->getColumns() as $col) {
-        $clo = strtolower($col->getName());
+        $clo = $col->getPhpName();
         if ($col->isPrimaryKey())
         {
           $clo = 'pk';
@@ -55,7 +55,7 @@ class LuceneableBehavior extends Behavior
       foreach ($columns as $c => $type)
       {
         $col = $this->getTable()->getColumn($c);
-        $clo = strtolower($col->getName());
+        $clo = $col->getPhpName();
         $fieldMethod = $this->getLuceneFieldMethod($type);
         if (strtolower($type) == 'keyword')
         {
@@ -67,7 +67,7 @@ class LuceneableBehavior extends Behavior
       {
         $pks = $this->getTable()->getPrimaryKey();
         if (count($pks) > 0) $pks = $pks[0];
-        $data[strtolower($pks->getName())] = $this->getLuceneFieldMethod($type);
+        $data[$pks->getPhpName()] = $this->getLuceneFieldMethod($type);
       }
     }
     return $this->renderTemplate('staticStoredIndex', array(

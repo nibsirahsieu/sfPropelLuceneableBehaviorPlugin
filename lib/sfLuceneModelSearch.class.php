@@ -6,10 +6,6 @@ class sfLuceneModelSearch
   
   public function __construct($model, $sSearch = null)
   {
-    if (!($sSearch instanceof Zend_Search_Lucene_Search_Query))
-    {
-      $sSearch = Zend_Search_Lucene_Search_QueryParser::parse($sSearch);
-    }
     $this->_queryString = $sSearch;
     $this->_model = $model;
   }
@@ -22,7 +18,7 @@ class sfLuceneModelSearch
   public function find($limit = 10)
   {
     $hits = sfLuceneableToolkit::getHits($this->_model, $this->_queryString);
-    return new sfLuceneModelResults($model, $hits, $this->_queryString);
+    return new sfLuceneModelResults($model, $hits);
   }
 
   public function paginate($page, $limit = 10)

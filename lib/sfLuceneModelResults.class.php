@@ -4,17 +4,20 @@ class sfLuceneModelResults implements Iterator, Countable, ArrayAccess
   protected $model;
   protected $results;
   protected $pointer = 0;
-  protected $indexedColums = array();
-  protected $query = null;
-
-  public function __construct($model, $results, $query)
+  
+  public function __construct($model, $pks)
   {
     $this->model = $model;
-    $this->results = $results;
-    $this->query = $query;
-    $this->indexedColumns = call_user_func(array($model.'Peer', 'getIndexedColumns'));
+    $this->results = $this->collectResults($model, $pks);
   }
 
+  protected function collectResults($model, $pks)
+  {
+    $indexedColumns = call_user_func(array($model.'Peer', 'getIndexedColumns'));
+    $columns = array_keys($indexedColumns);
+    return PropelQuery::from($model)->select($columns)->findPks($pks);
+  }
+  
   public function current()
   {
     return $this->hydrate($this->results[$this->pointer]);
@@ -67,37 +70,10 @@ class sfLuceneModelResults implements Iterator, Countable, ArrayAccess
 
   protected function hydrate($result)
   {
-    $tmp = array();
-    foreach ($this->indexedColumns as $col => $type)
-    {
-      if (strtolower($type) == 'text')
-      {
-        $tmp[$col] = $this->query->htmlFragmentHighlightMatches($result->$col);
-      }
-      elseif (strtolower($type) == 'keyword')
-      {
-        $tmp[$col] = $result->pk;
-      }
-      else
-      {
-        $tmp[$col] = $result->$col;
-      }
-    }
     $object = new $this->model;
-    $object->fromArray($tmp, BasePeer::TYPE_FIELDNAME);
+    $object->fromArray($result, BasePeer::TYPE_PHPNAME);
     $object->setNew(false);
     $object->resetModified();
     return $object;
-  }
-
-  public function toArray()
-  {
-    $retvals = array();
-    foreach ($this->results as $result)
-    {
-      $object = $this->hydrate($result);
-      $retvals[] = $object;
-    }
-    return $retvals;
   }
 }
