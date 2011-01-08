@@ -18,14 +18,14 @@ class sfLuceneModelSearch
   public function find($limit = 10)
   {
     $hits = sfLuceneableToolkit::getHits($this->_model, $this->_queryString);
-    return PropelQuery::from($this->model)->findPks($hits);
+    return PropelQuery::from($this->_model)->findPks($hits);
   }
 
   public function paginate($page, $limit = 10)
   {
     $pager = new sfLucenePager($this->_model, $this->_queryString, $limit);
-		$pager->setPage($page);
-		$pager->init();
+    $pager->setPage($page);
+    $pager->init();
     return $pager;
   }
 }

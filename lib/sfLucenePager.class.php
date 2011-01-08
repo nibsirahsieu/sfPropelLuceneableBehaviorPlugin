@@ -18,16 +18,16 @@ class sfLucenePager
   public function init()
   {
     $hasMaxRecordLimit = ($this->getMaxRecordLimit() !== false);
-		$maxRecordLimit = $this->getMaxRecordLimit();
-    
+    $maxRecordLimit = $this->getMaxRecordLimit();
+
     $hits = sfLuceneableToolkit::getHits($this->model, $this->search);
     $count = count($hits);
     $this->setNbResults($hasMaxRecordLimit ? min($count, $maxRecordLimit) : $count);
     if (($this->getPage() == 0 || $this->getMaxPerPage() == 0)) {
-			$this->setLastPage(0);
-		} else {
-			$this->setLastPage(ceil($this->getNbResults() / $this->getMaxPerPage()));		
-		}
+      $this->setLastPage(0);
+    } else {
+      $this->setLastPage(ceil($this->getNbResults() / $this->getMaxPerPage()));
+    }
     $this->results = $hits;
   }
   
@@ -69,25 +69,25 @@ class sfLucenePager
   }
 
   public function getNbResults()
-	{
-		return $this->nbResults;
-	}
+  {
+    return $this->nbResults;
+  }
 
-	protected function setNbResults($nb)
-	{
+  protected function setNbResults($nb)
+  {
     $this->nbResults = $nb;
-	}
-  
-  public function getMaxRecordLimit()
-	{
-		return $this->maxRecordLimit;
-	}
+  }
 
-	public function setMaxRecordLimit($limit)
-	{
-		$this->maxRecordLimit = $limit;
-	}
-  
+  public function getMaxRecordLimit()
+  {
+    return $this->maxRecordLimit;
+  }
+
+  public function setMaxRecordLimit($limit)
+  {
+    $this->maxRecordLimit = $limit;
+  }
+
   public function getPage()
   {
     return $this->page;
@@ -111,18 +111,18 @@ class sfLucenePager
   }
 
   public function getLastPage()
-	{
-		return $this->lastPage;
-	}
+  {
+    return $this->lastPage;
+  }
 
-	protected function setLastPage($page)
-	{
-		$this->lastPage = $page;
-		if ($this->getPage() > $page) {
-			$this->setPage($page);
-		}
-	}
-  
+  protected function setLastPage($page)
+  {
+    $this->lastPage = $page;
+    if ($this->getPage() > $page) {
+      $this->setPage($page);
+    }
+  }
+
   public function getNextPage()
   {
     return min($this->getPage() + 1, $this->getLastPage());
@@ -133,44 +133,13 @@ class sfLucenePager
     return max($this->getPage() - 1, $this->getFirstPage());
   }
 
-  public function getFirstIndice()
-  {
-    if ($this->getPage() == 0)
-    {
-      return 1;
-    }
-    else
-    {
-      return ($this->getPage() - 1) * $this->getMaxPerPage() + 1;
-    }
-  }
-
-  public function getLastIndice()
-  {
-    if ($this->getPage() == 0)
-    {
-      return $this->getNbResults();
-    }
-    else
-    {
-      if (($this->getPage() * $this->getMaxPerPage()) >= $this->getNbResults())
-      {
-        return $this->getNbResults();
-      }
-      else
-      {
-        return ($this->getPage() * $this->getMaxPerPage());
-      }
-    }
-  }
-
   public function isFirstPage()
-	{
-		return $this->getPage() == $this->getFirstPage();
-	}
+  {
+    return $this->getPage() == $this->getFirstPage();
+  }
 
-	public function isLastPage()
-	{
-		return $this->getPage() == $this->getLastPage();
-	}
+  public function isLastPage()
+  {
+    return $this->getPage() == $this->getLastPage();
+  }
 }
