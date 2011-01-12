@@ -63,20 +63,22 @@ class LuceneableBehavior extends Behavior
     else
     {
       $keywordFound = false;
-      foreach ($columns as $c => $type_boost)
+      foreach ($columns as $col => $type_boost)
       {
         $fieldMethods = array();
-        $col = $this->getTable()->getColumn($c);
-        $clo = $col->getPhpName();
         $type = explode(':', $type_boost);
         $fieldMethods[] = $this->getLuceneFieldMethod($type[0]);
         if (isset($type[1])) $fieldMethods[] = $type[1];
         if (strtolower($type[0]) == 'keyword')
         {
-          $clo = 'pk';
+          $column = 'pk';
           $keywordFound = true;
         }
-        $data[] = array($fieldMethods, $clo, 'get'.$col->getPhpName().'()');
+        else
+        {
+          $column = $this->getColumnPhpName($col);
+        }
+        $data[] = array($fieldMethods, $column, 'get'.$this->getColumnPhpName($col).'()');
       }
       if (!$keywordFound)
       {
@@ -126,5 +128,14 @@ class LuceneableBehavior extends Behavior
       }
     }
     return $this->renderTemplate('deleteLuceneIndex', array('method' => $method));
+  }
+
+  protected function getColumnPhpName($col)
+  {
+    $phpName = '';
+    $column = $this->getTable()->getColumn($col);
+    if ($column) $phpName = $column->getPhpName();
+    else $phpName = sfInflector::camelize($col);
+    return $phpName;
   }
 }
