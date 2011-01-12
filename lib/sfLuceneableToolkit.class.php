@@ -87,7 +87,7 @@ class sfLuceneableToolkit
       $hits = $index->find($query);
       foreach ($hits as $hit)
       {
-        $results[$hit->score] = $hit->pk;
+        $results[] = $hit->pk;
       }
     }
     catch (Exception $e)
