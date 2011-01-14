@@ -1,5 +1,4 @@
 # sfPropelLuceneableBehaviorPlugin #
-==================================
 
 The `sfPropelLuceneableBehaviorPlugin` is a symfony plugin that enabled the model(s) to be searchable. This plugin use sfPropel15Plugin as an ORM.
 
@@ -53,24 +52,25 @@ The `sfPropelLuceneableBehaviorPlugin` is a symfony plugin that enabled the mode
 
   * pagination
 
-    $pager = sfLuceneModelSearch::create($model, $query)->paginate($page=1, $limit = 10);
+        $pager = sfLuceneModelSearch::create($model, $query)->paginate($page=1, $limit = 10);
 
-    [php]
-    foreach ($pager->getResults() as $value)
-    {
-      echo $value->getTitle() . ',' . $value->getContent();
-    }
+        [php]
+        foreach ($pager->getResults() as $value)
+        {
+          echo $value->getTitle() . ',' . $value->getContent();
+        }
 
   * non pagination
-    $values = sfLuceneModelSearch::create($model, $query)->find($limit = 10);
+    
+        $values = sfLuceneModelSearch::create($model, $query)->find($limit = 10);
 
-    [php]
-    foreach ($values as $value)
-    {
-    	echo $value->getTitle() . ',' . $value->getContent();
-    }
+        [php]
+        foreach ($values as $value)
+        {
+          echo $value->getTitle() . ',' . $value->getContent();
+        }
 
-## Available tasks
+## Available tasks ##
 
-  * ./symfony propel:generate-lucene-index
-  * ./symfony propel:optimize-lucene-index
+      * php symfony propel:generate-lucene-index
+      * php symfony propel:optimize-lucene-index
