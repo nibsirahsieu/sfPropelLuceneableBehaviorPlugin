@@ -88,8 +88,18 @@ class LuceneableBehavior extends Behavior
         $data[] = array($fieldMethods, 'pk', 'get'.$pks->getPhpName().'()');
       }
     }
+    $deletedAtColumnMethod = null;
+    $deletedAtColumn = null;
+    if ($this->getTable()->hasBehavior('soft_delete'))
+    {
+      $softDeleteBehavior = $this->getTable()->getBehavior('soft_delete');
+      $deletedAtColumnMethod = 'get'.$this->getColumnPhpName($softDeleteBehavior->getParameter('deleted_column')).'()';
+      $deletedAtColumn = $this->getTable()->getColumn($softDeleteBehavior->getParameter('deleted_column'))->getName();
+    }
     return $this->renderTemplate('updateLuceneIndex', array(
-			'data'   => $data,
+      'data'   => $data,
+      'deletedAtColumnMethod' => $deletedAtColumnMethod,
+      'deletedAtColumn' => $deletedAtColumn,
     ));
   }
 
