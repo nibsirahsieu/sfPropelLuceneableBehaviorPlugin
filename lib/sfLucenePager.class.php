@@ -102,7 +102,8 @@ class sfLucenePager
       $results = $this->results;
     }
     $results = array_slice($this->results, $offset, $limit);
-    return PropelQuery::from($this->model)->findPks($results);
+    if ($results) return PropelQuery::from($this->model)->findPks($results);
+    return array();
   }
 
   public function getFirstPage()
