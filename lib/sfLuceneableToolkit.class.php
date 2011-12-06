@@ -27,6 +27,7 @@ class sfLuceneableToolkit
     set_include_path(dirname(__FILE__).'/../vendor'.PATH_SEPARATOR.get_include_path());
     require_once dirname(__FILE__).'/../vendor/Zend/Loader/Autoloader.php';
     Zend_Loader_Autoloader::getInstance();
+    self::prepareZendSearchLucene();
     self::$zendLoaded = true;
   }
 
