@@ -72,5 +72,5 @@ The `sfPropelLuceneableBehaviorPlugin` is a symfony plugin that enabled the mode
 
 ## Available tasks ##
 
-      * php symfony propel:generate-lucene-index
-      * php symfony propel:optimize-lucene-index
+      * php symfony propel:lucene-create-index
+      * php symfony propel:lucene-optimize-index
